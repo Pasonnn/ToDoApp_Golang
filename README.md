@@ -61,7 +61,7 @@ All API responses follow this consistent format:
 
 1. **Clone the repository**
 ```bash
-git clone <repository-url>
+git clone https://github.com/Pasonnn/ToDoApp_Golang.git
 cd server
 ```
 
