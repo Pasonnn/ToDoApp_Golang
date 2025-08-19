@@ -1,0 +1,225 @@
+{
+  "api_tests": {
+    "base_url": "http://localhost:8080",
+    "endpoints": [
+      {
+        "name": "Create Task",
+        "method": "POST",
+        "endpoint": "/tasks",
+        "description": "Create a new task",
+        "request": {
+          "headers": {
+            "Content-Type": "application/json"
+          },
+          "body": {
+            "title": "Learn Go Programming",
+            "description": "Study Go programming language fundamentals and build a REST API"
+          }
+        },
+        "expected_response": {
+          "success": true,
+          "statusCode": 201,
+          "message": "Task created successfully",
+          "data": {
+            "id": 1,
+            "title": "Learn Go Programming",
+            "description": "Study Go programming language fundamentals and build a REST API",
+            "completed": false
+          }
+        },
+        "curl_command": "curl -X POST http://localhost:8080/tasks -H \"Content-Type: application/json\" -d '{\"title\": \"Learn Go Programming\", \"description\": \"Study Go programming language fundamentals and build a REST API\"}'"
+      },
+      {
+        "name": "Get All Tasks",
+        "method": "GET",
+        "endpoint": "/tasks",
+        "description": "Retrieve all tasks",
+        "request": {
+          "headers": {}
+        },
+        "expected_response": {
+          "success": true,
+          "statusCode": 200,
+          "message": "Tasks retrieved successfully",
+          "data": [
+            {
+              "id": 1,
+              "title": "Learn Go Programming",
+              "description": "Study Go programming language fundamentals and build a REST API",
+              "completed": false
+            },
+            {
+              "id": 2,
+              "title": "Build Frontend",
+              "description": "Create React frontend to consume the API",
+              "completed": false
+            }
+          ]
+        },
+        "curl_command": "curl http://localhost:8080/tasks"
+      },
+      {
+        "name": "Update Task Completion",
+        "method": "PUT",
+        "endpoint": "/tasks/1",
+        "description": "Mark a task as completed",
+        "request": {
+          "headers": {
+            "Content-Type": "application/json"
+          },
+          "body": {
+            "completed": true
+          }
+        },
+        "expected_response": {
+          "success": true,
+          "statusCode": 200,
+          "message": "Task updated successfully",
+          "data": {
+            "id": 1,
+            "title": "Learn Go Programming",
+            "description": "Study Go programming language fundamentals and build a REST API",
+            "completed": true
+          }
+        },
+        "curl_command": "curl -X PUT http://localhost:8080/tasks/1 -H \"Content-Type: application/json\" -d '{\"completed\": true}'"
+      },
+      {
+        "name": "Delete Task",
+        "method": "DELETE",
+        "endpoint": "/tasks/1",
+        "description": "Delete a task by ID",
+        "request": {
+          "headers": {}
+        },
+        "expected_response": {
+          "success": true,
+          "statusCode": 200,
+          "message": "Task deleted successfully",
+          "data": {
+            "id": 1
+          }
+        },
+        "curl_command": "curl -X DELETE http://localhost:8080/tasks/1"
+      }
+    ],
+    "error_test_cases": [
+      {
+        "name": "Create Task - Invalid Request",
+        "method": "POST",
+        "endpoint": "/tasks",
+        "description": "Test with missing required fields",
+        "request": {
+          "headers": {
+            "Content-Type": "application/json"
+          },
+          "body": {
+            "title": "Incomplete Task"
+          }
+        },
+        "expected_response": {
+          "success": false,
+          "statusCode": 400,
+          "message": "Invalid request body",
+          "data": null
+        },
+        "curl_command": "curl -X POST http://localhost:8080/tasks -H \"Content-Type: application/json\" -d '{\"title\": \"Incomplete Task\"}'"
+      },
+      {
+        "name": "Update Task - Not Found",
+        "method": "PUT",
+        "endpoint": "/tasks/999",
+        "description": "Test updating non-existent task",
+        "request": {
+          "headers": {
+            "Content-Type": "application/json"
+          },
+          "body": {
+            "completed": true
+          }
+        },
+        "expected_response": {
+          "success": false,
+          "statusCode": 404,
+          "message": "Task not found",
+          "data": null
+        },
+        "curl_command": "curl -X PUT http://localhost:8080/tasks/999 -H \"Content-Type: application/json\" -d '{\"completed\": true}'"
+      },
+      {
+        "name": "Delete Task - Not Found",
+        "method": "DELETE",
+        "endpoint": "/tasks/999",
+        "description": "Test deleting non-existent task",
+        "request": {
+          "headers": {}
+        },
+        "expected_response": {
+          "success": false,
+          "statusCode": 404,
+          "message": "Task not found",
+          "data": null
+        },
+        "curl_command": "curl -X DELETE http://localhost:8080/tasks/999"
+      },
+      {
+        "name": "Update Task - Invalid ID",
+        "method": "PUT",
+        "endpoint": "/tasks/invalid",
+        "description": "Test with invalid task ID format",
+        "request": {
+          "headers": {
+            "Content-Type": "application/json"
+          },
+          "body": {
+            "completed": true
+          }
+        },
+        "expected_response": {
+          "success": false,
+          "statusCode": 400,
+          "message": "Invalid task ID",
+          "data": null
+        },
+        "curl_command": "curl -X PUT http://localhost:8080/tasks/invalid -H \"Content-Type: application/json\" -d '{\"completed\": true}'"
+      }
+    ],
+    "test_workflow": [
+      {
+        "step": 1,
+        "action": "Create first task",
+        "command": "curl -X POST http://localhost:8080/tasks -H \"Content-Type: application/json\" -d '{\"title\": \"Complete Go Backend\", \"description\": \"Finish the todo API implementation\"}'"
+      },
+      {
+        "step": 2,
+        "action": "Create second task",
+        "command": "curl -X POST http://localhost:8080/tasks -H \"Content-Type: application/json\" -d '{\"title\": \"Build Frontend\", \"description\": \"Create React frontend application\"}'"
+      },
+      {
+        "step": 3,
+        "action": "Get all tasks",
+        "command": "curl http://localhost:8080/tasks"
+      },
+      {
+        "step": 4,
+        "action": "Mark first task as completed",
+        "command": "curl -X PUT http://localhost:8080/tasks/1 -H \"Content-Type: application/json\" -d '{\"completed\": true}'"
+      },
+      {
+        "step": 5,
+        "action": "Get all tasks again",
+        "command": "curl http://localhost:8080/tasks"
+      },
+      {
+        "step": 6,
+        "action": "Delete second task",
+        "command": "curl -X DELETE http://localhost:8080/tasks/2"
+      },
+      {
+        "step": 7,
+        "action": "Get all tasks final check",
+        "command": "curl http://localhost:8080/tasks"
+      }
+    ]
+  }
+}
